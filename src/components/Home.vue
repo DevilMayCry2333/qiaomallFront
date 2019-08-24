@@ -183,14 +183,17 @@
 
             <el-table-column
             label="删除">
-            <el-button type="danger" icon="el-icon-delete" circle @click="orderDel"></el-button>
+             <template scope="scope4" v-if="isShow==4">
+            <el-button type="danger" icon="el-icon-delete" circle @click="orderDel(scope4.row.id)"></el-button>
+             </template>
 
             </el-table-column>
 
             <el-table-column
             label="查看">
-            <el-button type="info" icon="el-icon-message" circle></el-button>
-
+             <template scope="scope5" v-if="isShow==4">
+            <el-button type="info" icon="el-icon-message" circle @click="showOrderDetail(scope5.row.id)"></el-button>
+             </template>
             </el-table-column>
 
 
@@ -204,6 +207,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import axios from 'axios'
+import { setTimeout } from 'timers';
 const config = require('../config/conf.js');
 export default Vue.extend({
     name: 'Home',
@@ -261,17 +265,43 @@ export default Vue.extend({
       handleOpen(key, keyPath) {
         console.log(key, keyPath);
       },
-      orderDel(){
+      showOrderDetail(e){
+          console.log(e);
+          this.$router.push({
+              path:'/OrderDetail',
+              query:{
+                  id:e
+              }
+          })
+      },
+      orderDel(e){
           console.log("orderDel");
+          console.log(e);
+          var that1 = this;
            this.$confirm('此操作将永久删除该订单, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+                  var that = this;
+                axios({
+                        method:'post',
+                        url: config.url+ "delOrder",
+                        params:{
+                            id:e
+                        }
+                }).then(function(resp){
+                        that.$nextTick(function () {
+                        console.log(resp.data);
+                        that.$message({
+                            type: 'success',
+                            message: '删除成功!请手动返回!'
+                        });
+                        // console.log(this.desserts);
+                        })
+
+                console.log("hello");
+            })
         }).catch(() => {
           this.$message({
             type: 'info',
