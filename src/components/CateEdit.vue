@@ -12,40 +12,29 @@
         </el-form-item>
 
             <el-form-item label="数量单位" prop="name">
-            <el-input v-model="cateForm.subtitle"></el-input>
+            <el-input v-model="cateForm.productUnit"></el-input>
         </el-form-item>
 
         <el-form-item label="排序" prop="desc">
-            <el-input type="textarea" v-model="cateForm.desc"></el-input>
+            <el-input type="textarea" v-model="cateForm.sort"></el-input>
         </el-form-item>
 
             <el-form-item label="是否显示" prop="productSn">
-                <el-radio v-model="DisplayStatus" label="1">是</el-radio>
-                <el-radio v-model="DisplayStatus" label="2">否</el-radio>
+                <el-radio v-model="showStatus" label="1">是</el-radio>
+                <el-radio v-model="showStatus" label="2">否</el-radio>
             </el-form-item>
 
             <el-form-item label="是否显示在导航栏" prop="productSn">
-                <el-radio v-model="NavStatus" label="1">是</el-radio>
-                <el-radio v-model="NavStatus" label="2">否</el-radio>
+                <el-radio v-model="navStatus" label="1">是</el-radio>
+                <el-radio v-model="navStatus" label="2">否</el-radio>
             </el-form-item>
 
-            <el-form-item label="市场价" prop="originalPrice">
-            <el-input v-model="cateForm.originalPrice"></el-input>
-        </el-form-item>
-
-        <el-form-item label="筛选属性" prop="region">
-            <el-select v-model="cateForm.brand" placeholder="请选择商品品牌">
-            <el-option label="法拉利" value="shanghai"></el-option>
-            <el-option label="兰博基尼" value="beijing"></el-option>
-            </el-select>
-        </el-form-item>
-
             <el-form-item label="关键词" prop="unit">
-            <el-input v-model="cateForm.unit"></el-input>
+            <el-input v-model="cateForm.keywords"></el-input>
         </el-form-item>
 
             <el-form-item label="分类描述" prop="weight">
-            <el-input v-model="cateForm.weight"></el-input>
+            <el-input v-model="cateForm.description"></el-input>
         </el-form-item>
 
         <el-form-item>
@@ -57,22 +46,23 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import axios from 'axios'
+const config = require('../config/conf.js');
+
 export default Vue.extend({
         name: 'CateEdit',
     data() {
       return {
-        DisplayStatus:1,
-        NavStatus:1,
+        queryId:1,
+        showStatus:1,
+        navStatus:1,
         cateForm: {
           name: '',
-          subtitle:'',
+          productUnit:'',
           brand: '',
-          desc: '',
-          productSn:'',
-          price:'',
-          originalPrice:'',
+          description: '',
+          keywords:'',
           unit:'',
-          weight:'',
           sort:'',
         },
         rules: {
@@ -137,6 +127,27 @@ export default Vue.extend({
           label: '资源',
         }]
       };
+    },
+    created(){
+      this.queryId = this.$route.query.id;
+      console.log(this.queryId);
+      var that = this;
+                axios({
+                        method:'post',
+                        url: config.url+ "EditShowCate",
+                        params:{
+                            id:this.queryId
+                        }
+                }).then(function(resp){
+                        that.$nextTick(function () {
+                        console.log(resp.data);
+                        that.cateForm = resp.data;
+                        })
+
+                console.log("hello");
+            })
+
+      console.log("Created");
     },
     methods:{
       submitForm(formName) {
