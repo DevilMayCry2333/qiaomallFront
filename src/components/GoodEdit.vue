@@ -2,6 +2,7 @@
     <el-form :model="goodsForm" :rules="rules" ref="goodsForm" label-width="100px" class="demo-ruleForm">
     <el-form-item label="商品分类">
         <div class="block">
+
         <el-cascader
             v-model="value"
             :options="options"
@@ -11,10 +12,10 @@
   </el-form-item>
 
   <el-form-item label="商品名称" prop="name">
-    <el-input v-model="goodsForm.name"></el-input>
+    <el-input v-model="goodsForm.brandName"></el-input>
   </el-form-item>
     <el-form-item label="副标题" prop="name">
-    <el-input v-model="goodsForm.subtitle"></el-input>
+    <el-input v-model="goodsForm.detailDesc"></el-input>
   </el-form-item>
   <el-form-item label="商品品牌" prop="region">
     <el-select v-model="goodsForm.brand" placeholder="请选择商品品牌">
@@ -56,7 +57,7 @@
   </el-form-item>
 
   <el-form-item>
-    <el-button type="primary" @click="submitForm('goodsForm')">立即创建</el-button>
+    <el-button type="primary" @click="submitForm('goodsForm')">立即修改</el-button>
     <el-button @click="resetForm('goodsForm')">重置</el-button>
   </el-form-item>
 </el-form>
@@ -64,12 +65,16 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import axios from 'axios'
+const config = require('../config/conf.js');
+
 export default Vue.extend({
     name: 'GoodEdit',
     data() {
       return {
+        queryId:'1',
         goodsForm: {
-          name: '',
+          brandName: '',
           subtitle:'',
           brand: '',
           desc: '',
@@ -81,18 +86,18 @@ export default Vue.extend({
           sort:'',
         },
         rules: {
-          name: [
+          brandName: [
             { required: true, message: '请输入活动名称', trigger: 'blur' },
             { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
           ],
-          region: [
+          brand: [
             { required: true, message: '请选择活动区域', trigger: 'change' }
           ],
-          date1: [
-            { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
+          subtitle: [
+            {required: true, message: '请选择日期', trigger: 'change' }
           ],
-          date2: [
-            { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
+          desc: [
+            {required: true, message: '请输入商品描述', trigger: 'change' }
           ],
           type: [
             { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
@@ -100,9 +105,6 @@ export default Vue.extend({
           resource: [
             { required: true, message: '请选择活动资源', trigger: 'change' }
           ],
-          desc: [
-            { required: true, message: '请填写活动形式', trigger: 'blur' }
-          ]
         },
         value: [],
         options: [{
@@ -143,10 +145,56 @@ export default Vue.extend({
         }]
       };
     },
+    created(){
+      console.log(this.$route.query.id);
+      this.queryId = this.$route.query.id;
+
+      var that = this;
+                axios({
+                        method:'post',
+                        url: config.url+ "showGoodsDetail",
+                        params:{
+                            goodsId: this.queryId
+                        }
+                }).then(function(resp){
+                        that.$nextTick(function () {
+                        console.log(resp.data);
+                        this.goodsForm = resp.data;
+                        // console.log(this.desserts);
+                        })
+                })
+    },
     methods: {
       submitForm(formName) {
+        var that = this;
+
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            
+            console.log(this.$refs[formName].$options.propsData.model);
+                axios({
+                        method:'post',
+                        url: config.url+ "EditGoods",
+                        params:{
+                            id:this.goodsForm.id,
+                            brandName: this.goodsForm.brandName,
+                            detailDesc: this.goodsForm.detailDesc,
+                            brand: this.goodsForm.brand,
+                            desc: this.goodsForm.desc,
+                            productSn: this.goodsForm.productSn,
+                            price: this.goodsForm.price,
+                            originalPrice: this.goodsForm.originalPrice,
+                            stock: this.goodsForm.stock,
+                            unit: this.goodsForm.unit,
+                            weight: this.goodsForm.weight,
+                            sort: this.goodsForm.sort
+                        }
+                }).then(function(resp){
+                        that.$nextTick(function () {
+                        console.log(resp.data);
+                        })
+                })
+
             alert('submit!');
           } else {
             console.log('error submit!!');
