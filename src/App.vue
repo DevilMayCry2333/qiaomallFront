@@ -7,9 +7,12 @@
 <script>
 
 export default {
-  name: 'app',
+  name: 'app'
   // components: {
-  //   HelloWorld
+  //   HelloWorld,
+  //   GoodEdit,
+  //   Home,
+  //   Login
   // }
 }
 </script>
