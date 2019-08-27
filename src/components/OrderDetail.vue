@@ -150,7 +150,7 @@ export default Vue.extend({
          var that = this;
                 axios({
                         method:'post',
-                        url: config.url+ "/Order/OrderBasicDetail",
+                        url: config.url+ "Order/OrderBasicDetail",
                         params:{
                             id: this.id
                         }
@@ -166,7 +166,7 @@ export default Vue.extend({
 
                             axios({
                         method:'post',
-                        url: config.url+ "/Order/OrderItemById",
+                        url: config.url+ "Order/OrderItemById",
                         params:{
                             id: this.id
                         }
