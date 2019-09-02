@@ -38,7 +38,7 @@
     </el-col>
 
     <el-col :span="5" style="margin-left: 10%">
-          <el-input v-model="searchForm.paymentTime" class="searchName"></el-input>
+          <el-input v-model="searchForm.createTime" class="searchName"></el-input>
           <el-button type="primary" @click="searchByTime">以时间搜索</el-button>
     </el-col>
 
@@ -231,10 +231,22 @@
 <script lang="ts">
 import Vue from 'vue'
 import axios from 'axios'
+import Cookies from 'js-cookie'
+
 import { setTimeout } from 'timers';
 const config = require('../config/conf.js');
 export default Vue.extend({
     name: 'Home',
+    created(){
+        var v = Cookies.get('token');
+          if(!v){
+            this.$message({
+                message: '您未登录,请登录',
+                type: 'fail'
+            });
+            this.$router.push("/login");
+          }
+    },
     data(){
         return{
             isShow:0,
@@ -284,7 +296,7 @@ export default Vue.extend({
             searchForm:{
                 name:'',
                 id:'',
-                paymentTime:'',
+                createTime:'',
 
             },
             fits: ['fill'],
@@ -308,7 +320,13 @@ export default Vue.extend({
                         }
                 }).then(function(resp){
                         that.$nextTick(function () {
+
+                        that.$message({
+                            message: '恭喜你，这是一条成功消息',
+                            type: 'success'
+                        });
                         console.log(resp.data);
+                        that.orderData = resp.data;
                         // console.log(this.desserts);
                         })
             })
@@ -326,7 +344,12 @@ export default Vue.extend({
                         }
                 }).then(function(resp){
                         that.$nextTick(function () {
+                        that.$message({
+                            message: '恭喜你，这是一条成功消息',
+                            type: 'success'
+                        });
                         console.log(resp.data);
+                        that.orderData = resp.data;
                         // console.log(this.desserts);
                         })
             })
@@ -342,11 +365,17 @@ export default Vue.extend({
                         method:'post',
                         url: config.url+ "SearchByTime",
                         params:{
-                            time:this.searchForm.paymentTime,
+                            time:this.searchForm.createTime,
                         }
                 }).then(function(resp){
                         that.$nextTick(function () {
+                        that.$message({
+                            message: '恭喜你，这是一条成功消息',
+                            type: 'success'
+                        });
+
                         console.log(resp.data);
+                        that.orderData = resp.data;
                         // console.log(this.desserts);
                         })
             })
